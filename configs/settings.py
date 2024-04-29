@@ -17,7 +17,7 @@ import os
 
 load_dotenv()
 print("**********************************")
-raise Exception(f"DEBUG: {os.environ.get('DEBUG')}")
+print(f"DEBUG: {os.environ.get('DEBUG')}")
 print("**********************************")
 print(f"SECRET_KEY: {os.environ.get('DJANGO_SECRET_KEY')}")
 print("**********************************")
