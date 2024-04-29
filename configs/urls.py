@@ -23,5 +23,5 @@ from configs.schema import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('v1/graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
+    path('v1/graphql/', GraphQLView.as_view(graphiql=True, schema=schema)),
 ]
