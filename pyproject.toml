@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "python_services"
+version = "1.6.1"
+description = "poetry is a package management"
+authors = ["abdulhafeez <abd20160752@std.psut.edu.jo>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.103.1"
+mysqlclient = "^2.2.0"
+idna = "^3.4"
+django = "^4.2.5"
+sqlalchemy = "^2.0.21"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+typing-extensions = "^4.8.0"
+django-cors-headers = "^4.2.0"
+graphene-django = "^3.1.5"
+django-graphql-jwt = "^0.4.0"
+django-filter = "^23.3"
+django-environ = "^0.11.2"
+python-dotenv = "^1.0.0"
+gunicorn = "^21.2.0"
+django-mysql = "^4.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
