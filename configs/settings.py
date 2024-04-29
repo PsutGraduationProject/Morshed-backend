@@ -16,16 +16,26 @@ import datetime
 import os
 
 load_dotenv()
-
+print("**********************************")
+print(f"DEBUG: {os.environ.get('DEBUG')}")
+print("**********************************")
+print(f"SECRET_KEY: {os.environ.get('DJANGO_SECRET_KEY')}")
+print("**********************************")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False')
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['morshed.co', 'www.morshed.co', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'www.morshed.co',  # 'morshed.co
+    'morshed.co',
+    'localhost',
+    '127.0.0.1',
+    '24.144.87.123'
+]
 
 # Application definition
 
