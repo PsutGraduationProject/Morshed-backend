@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.apps import apps
 from apps.user_auth.models import (
     MorshedStudent,
-    OTP
+    OTP,
 )
 app = apps.get_app_config('graphql_auth')
 

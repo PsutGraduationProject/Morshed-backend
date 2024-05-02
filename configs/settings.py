@@ -138,6 +138,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'user_auth.MorshedStudent'
 # --------------------------------------- New Configurations -----------------------------------------------------------
 
 # CORS config to enable the request from front-end

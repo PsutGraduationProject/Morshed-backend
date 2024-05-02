@@ -1,14 +1,14 @@
 import graphene
 import graphql_jwt
 from graphql_jwt import shortcuts
-from django.contrib.auth.hashers import check_password
-from apps.user_auth.authentication import MorshedStudentIdAuthenticationBackend
+from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 from graphene_django import DjangoObjectType
 from graphql_auth import mutations
 import random
 from apps.user_auth.models import (
     OTP,
-    MorshedStudent
+    MorshedStudent,
 )
 
 
@@ -24,40 +24,31 @@ class OTPType(DjangoObjectType):
         fields = "__all__"
 
 
-class ObtainJSONWebToken(graphene.Mutation):
-    token = graphene.String()
-    refresh_token = graphene.String()
-    user = graphene.Field(MorshedStudentType)
-
-    class Arguments:
-        student_id = graphene.Int(required=True)
-
-    def mutate(self, info, student_id):
-        user = MorshedStudent.objects.get(student_id=student_id)
-        if user is None:
-            raise Exception('Authentication failed.')
-        token = shortcuts.get_token(user)
-        refresh_token = shortcuts.create_refresh_token(user.morshed_user)
-        return ObtainJSONWebToken(token=token, refresh_token=refresh_token, user=user)
-
-
 class GenerateOTP(graphene.Mutation):
     class Arguments:
         student_id = graphene.Int(required=True)
+        password = graphene.String(required=True)
 
     success = graphene.Boolean()
     message = graphene.String()
+    otp = graphene.Int()
 
-    def mutate(self, info, student_id):
-        morshed_student = MorshedStudent.objects.get(student_id=student_id)
+    def mutate(self, info, student_id, password):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication required or invalid credentials.')
+
+        morshed_student = authenticate(username=user.username, password=password)
+
         otp = '{:06d}'.format(random.randint(0, 999999))
         OTP.objects.create(
-            user=morshed_student.morshed_user,
+            morshed_user=morshed_student,
             otp_code=otp
         )
         return GenerateOTP(
             success=True,
-            message='OTP generated successfully'
+            message="OTP generated successfully",
+            otp=otp
         )
 
 
@@ -70,9 +61,10 @@ class VerifyOTP(graphene.Mutation):
     message = graphene.String()
 
     def mutate(self, info, student_id, otp):
+        user = info.context.user
         try:
-            morshed_student = MorshedStudent.objects.get(student_id=student_id)
-            auth_process = OTP.objects.filter(user_id=morshed_student.morshed_user).latest('created_at')
+            morshed_student = authenticate(username=user.username, password=password)
+            auth_process = OTP.objects.filter(morshed_user=morshed_student).latest('created_at')
             if auth_process.is_otp_valid(otp):
                 return VerifyOTP(success=True, message="OTP verified successfully.")
             else:
@@ -81,6 +73,8 @@ class VerifyOTP(graphene.Mutation):
             return VerifyOTP(success=False, message="No OTP record found.")
         except MorshedStudent.DoesNotExist:
             return VerifyOTP(success=False, message="No student record found.")
+        except user.is_anonymous:
+            raise Exception('Authentication required or invalid credentials.')
 
 
 class OTPMutation(graphene.ObjectType):
@@ -89,7 +83,7 @@ class OTPMutation(graphene.ObjectType):
 
 
 class AuthMutation(graphene.ObjectType):
-    token_auth = ObtainJSONWebToken.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
 
@@ -102,20 +96,26 @@ class Query(graphene.ObjectType):
     )
     auth_process = graphene.Field(
         OTPType,
-        student_id=graphene.Int(required=True)
+        student_id=graphene.Int(required=True),
+        otp=graphene.String(required=True)
     )
 
     def resolve_morshed_student(self, info, student_id, password):
-        morshed_student = MorshedStudent.objects.get(student_id=student_id)
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication required or invalid credentials.')
 
-        # Check if the provided password matches the user's password
-        if not check_password(password, morshed_student.morshed_user.password):
-            raise Exception('Invalid password')
+        morshed_student = get_object_or_404(
+            MorshedStudent,
+            student_id=student_id
+        )
+        authenticate(username=morshed_student.username, password=password)
 
         return morshed_student
 
     def resolve_auth_process(self, info, student_id):
-        if not info.context.user.is_authenticated:
-            raise Exception('Authentication required.')
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication required or invalid credentials.')
         morshed_student = MorshedStudent.objects.get(student_id=student_id)
-        return OTP.objects.filter(user_id=morshed_student.morshed_user.id).latest('created_at')
+        return OTP.objects.filter(morshed_user=morshed_student).latest('created_at')

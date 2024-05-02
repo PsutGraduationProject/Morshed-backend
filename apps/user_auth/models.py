@@ -1,35 +1,21 @@
 from django.db import models
 from apps.main.models import BaseModel
-from django.contrib.auth.models import User
+from apps.user_auth.manager import MorshedStudentManager
+from django.contrib.auth.models import (
+    AbstractUser,
+)
 
 
-class OTP(BaseModel):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='auth_process'
-    )
-    otp_code = models.CharField(
-        max_length=6,
-    )
+class MorshedStudent(BaseModel, AbstractUser):
+    groups = None
+    user_permissions = None
+    last_login = None
+    date_joined = None
 
-    def is_otp_valid(self, otp):
-        return self.otp == otp
+    objects = MorshedStudentManager()
 
-    def __str__(self):
-        return f"{self.otp_code} / {self.user}"
-
-
-class MorshedStudent(BaseModel):
-    morshed_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='morshed_student'
-    )
-    student_id = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True
+    student_id = models.IntegerField(
+        unique=True
     )
     student_gpa = models.FloatField(
         null=True,
@@ -49,11 +35,24 @@ class MorshedStudent(BaseModel):
         null=True,
         blank=True
     )
-
     USERNAME_FIELD = 'student_id'
 
-    def get_username(self):
-        return self.student_id
+    def __str__(self):
+        return f"{self.student_id} / {self.first_name} {self.last_name}"
+
+
+class OTP(BaseModel):
+    morshed_user = models.ForeignKey(
+        MorshedStudent,
+        on_delete=models.CASCADE,
+        related_name='auth_process'
+    )
+    otp_code = models.CharField(
+        max_length=6,
+    )
+
+    def is_otp_valid(self, otp):
+        return self.otp == otp
 
     def __str__(self):
-        return f"{self.student_id} / {self.morshed_user.first_name} {self.morshed_user.last_name}"
+        return f"{self.morshed_user} / {self.otp_code}"
