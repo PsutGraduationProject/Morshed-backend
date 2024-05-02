@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = False if os.environ.get('DEBUG') == 'False' else True
 
 ALLOWED_HOSTS = [
-    'www.morshed.co',  # 'morshed.co
+    'www.morshed.co',
     'morshed.co',
     'localhost',
     '127.0.0.1',
@@ -139,6 +139,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user_auth.MorshedStudent'
+
 # --------------------------------------- New Configurations -----------------------------------------------------------
 
 # CORS config to enable the request from front-end
@@ -151,15 +152,6 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:9000'
 ]
-
-# CORS_ALLOW_METHODS = [
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-# ]
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -188,9 +180,7 @@ GRAPHENE = {
 
 # JWT settings
 GRAPHQL_JWT = {
-    'JWT_VERIFY_EXPIRATION': False,  # Disable expiration verification
-    # 'JWT_EXPIRATION_DELTA': timedelta(days=1),
-    # 'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_VERIFY_EXPIRATION': False,
 }
 
 GRAPHQL_AUTH = {
