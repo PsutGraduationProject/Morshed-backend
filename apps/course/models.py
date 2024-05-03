@@ -1,6 +1,7 @@
 from django.db import models
 from apps.main.models import BaseModel
 from apps.user_auth.models import MorshedStudent
+from apps.course.constant import COURSE_LEVEL
 
 
 class Courses(BaseModel):
@@ -40,6 +41,7 @@ class Courses(BaseModel):
     )
     course_level = models.CharField(
         max_length=100,
+        choices=COURSE_LEVEL,
         null=True,
         blank=True
     )
