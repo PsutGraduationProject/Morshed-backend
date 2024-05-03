@@ -1,0 +1,9 @@
+ADVANCE = 'ADVANCE'
+INTERMEDIATE = 'INTERMEDIATE'
+BEGINNER = 'BEGINNER'
+
+COURSE_LEVEL = (
+    (ADVANCE, 'Advance'),
+    (INTERMEDIATE, 'Intermediate'),
+    (BEGINNER, 'Beginner')
+)
