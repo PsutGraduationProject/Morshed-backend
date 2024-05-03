@@ -1,4 +1,5 @@
 import graphene
+from apps.course.schema import Query as CourseQuery
 from apps.user_auth.schema import (
     OTPMutation,
     AuthMutation,
@@ -6,7 +7,7 @@ from apps.user_auth.schema import (
 )
 
 
-class Query(UserQuery, graphene.ObjectType):
+class Query(UserQuery, CourseQuery, graphene.ObjectType):
     pass
 
 

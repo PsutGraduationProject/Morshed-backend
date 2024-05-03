@@ -9,6 +9,10 @@ class Courses(BaseModel):
         null=True,
         blank=True
     )
+    course_number = models.IntegerField(
+        null=True,
+        blank=True
+    )
     course_grade = models.CharField(
         max_length=100,
         null=True,
