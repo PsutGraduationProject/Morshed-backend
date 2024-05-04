@@ -168,19 +168,19 @@ CORS_ALLOW_HEADERS = [
 # GraphQL config
 GRAPHENE = {
     "SCHEMA": "configs.schema.schema",
-    'AUTHENTICATION_BACKENDS': [
-        'apps.user_auth.authentication.MorshedStudentIdAuthenticationBackend',
-        'django.contrib.auth.backends.ModelBackend',
-    ],
-    'MIDDLEWARE': [
-        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
 }
 
-
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 # JWT settings
 GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': False,
+    "JWT_ALLOW_ARGUMENT": True,
 }
 
 GRAPHQL_AUTH = {

@@ -25,20 +25,19 @@ class OTPType(DjangoObjectType):
 
 
 class GenerateOTP(graphene.Mutation):
-    class Arguments:
-        student_id = graphene.Int(required=True)
-        password = graphene.String(required=True)
-
     success = graphene.Boolean()
     message = graphene.String()
     otp = graphene.Int()
 
-    def mutate(self, info, student_id, password):
+    def mutate(self, info):
         user = info.context.user
-        if user.is_anonymous:
-            raise Exception('Authentication required or invalid credentials.')
+        if not user.is_authenticated:
+            raise Exception('Authentication required or Wrong student ID provided')
 
-        morshed_student = authenticate(username=user.username, password=password)
+        morshed_student = MorshedStudent.objects.get(student_id=user.student_id)
+
+        if morshed_student is None:
+            raise Exception('Invalid User')
 
         otp = '{:06d}'.format(random.randint(0, 999999))
         OTP.objects.create(
@@ -60,10 +59,10 @@ class VerifyOTP(graphene.Mutation):
     success = graphene.Boolean()
     message = graphene.String()
 
-    def mutate(self, info, student_id, otp):
+    def mutate(self, info, otp):
         user = info.context.user
         try:
-            morshed_student = authenticate(username=user.username, password=password)
+            morshed_student = MorshedStudent.objects.get(student_id=user.student_id)
             auth_process = OTP.objects.filter(morshed_user=morshed_student).latest('created_at')
             if auth_process.is_otp_valid(otp):
                 return VerifyOTP(success=True, message="OTP verified successfully.")
