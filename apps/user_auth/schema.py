@@ -89,7 +89,6 @@ class Query(graphene.ObjectType):
     morshed_student = graphene.Field(
         MorshedStudentType,
         student_id=graphene.Int(required=True),
-        password=graphene.String(required=True)
     )
 
     def resolve_morshed_student(self, info, student_id):
