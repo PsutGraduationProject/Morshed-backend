@@ -52,7 +52,7 @@ class OTP(BaseModel):
     )
 
     def is_otp_valid(self, otp):
-        return self.otp == otp
+        return self.otp_code == otp
 
     def __str__(self):
         return f"{self.morshed_user} / {self.otp_code}"
