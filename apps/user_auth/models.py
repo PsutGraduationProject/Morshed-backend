@@ -21,6 +21,14 @@ class MorshedStudent(BaseModel, AbstractUser):
         null=True,
         blank=True
     )
+    passed_hours = models.IntegerField(
+        null=True,
+        blank=True
+    )
+    registered_hours = models.IntegerField(
+        null=True,
+        blank=True
+    )
     student_major = models.CharField(
         max_length=100,
         null=True,
