@@ -14,8 +14,8 @@ class Courses(BaseModel):
         null=True,
         blank=True
     )
-    course_grade = models.CharField(
-        max_length=100,
+    course_image = models.ImageField(
+        upload_to='media/course_images/',
         null=True,
         blank=True
     )
@@ -51,7 +51,7 @@ class Courses(BaseModel):
     )
 
     def __str__(self):
-        return f"{self.course_name} / {self.course_code}"
+        return f"{self.course_name} / {self.course_number}"
 
 
 class StudentCourse(BaseModel):
@@ -64,6 +64,11 @@ class StudentCourse(BaseModel):
         MorshedStudent,
         on_delete=models.CASCADE,
         related_name='student_course'
+    )
+    course_grade = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
     )
     is_completed = models.BooleanField(
         default=False
