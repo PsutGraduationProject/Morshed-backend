@@ -53,7 +53,6 @@ class GenerateOTP(graphene.Mutation):
 
 class VerifyOTP(graphene.Mutation):
     class Arguments:
-        student_id = graphene.Int(required=True)
         otp = graphene.String(required=True)
 
     success = graphene.Boolean()
