@@ -60,6 +60,8 @@ class VerifyOTP(graphene.Mutation):
 
     def mutate(self, info, otp):
         user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication required or invalid credentials.')
         try:
             morshed_student = MorshedStudent.objects.get(student_id=user.student_id)
             auth_process = OTP.objects.filter(morshed_user=morshed_student).latest('created_at')
@@ -71,9 +73,6 @@ class VerifyOTP(graphene.Mutation):
             return VerifyOTP(success=False, message="No OTP record found.")
         except MorshedStudent.DoesNotExist:
             return VerifyOTP(success=False, message="No student record found.")
-        except user.is_anonymous:
-            raise Exception('Authentication required or invalid credentials.')
-
 
 class OTPMutation(graphene.ObjectType):
     generate_otp = GenerateOTP.Field()
