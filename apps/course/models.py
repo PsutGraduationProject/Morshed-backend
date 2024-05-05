@@ -26,6 +26,11 @@ class Courses(BaseModel):
     is_external = models.BooleanField(
         default=False
     )
+    course_grade = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
     course_price = models.FloatField(
         null=True,
         blank=True
@@ -64,11 +69,6 @@ class StudentCourse(BaseModel):
         MorshedStudent,
         on_delete=models.CASCADE,
         related_name='student_course'
-    )
-    course_grade = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True
     )
     is_completed = models.BooleanField(
         default=False

@@ -1,4 +1,5 @@
 import graphene
+from django.db.models import Q
 from apps.user_auth.models import MorshedStudent
 from graphene_django.types import DjangoObjectType
 from apps.course.constant import (
@@ -47,6 +48,7 @@ class Query(graphene.ObjectType):
             id__in=course_ids,
             is_external=False
         )
+
         return courses
 
     def resolve_course_recommendation(self, info, student_id):
