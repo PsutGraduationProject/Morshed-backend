@@ -93,13 +93,8 @@ class Query(graphene.ObjectType):
         student_id=graphene.Int(required=True),
         password=graphene.String(required=True)
     )
-    auth_process = graphene.Field(
-        OTPType,
-        student_id=graphene.Int(required=True),
-        otp=graphene.String(required=True)
-    )
 
-    def resolve_morshed_student(self, info, student_id, password):
+    def resolve_morshed_student(self, info, student_id):
         user = info.context.user
         if user.is_anonymous:
             raise Exception('Authentication required or invalid credentials.')
@@ -108,13 +103,5 @@ class Query(graphene.ObjectType):
             MorshedStudent,
             student_id=student_id
         )
-        authenticate(username=morshed_student.username, password=password)
 
         return morshed_student
-
-    def resolve_auth_process(self, info, student_id):
-        user = info.context.user
-        if user.is_anonymous:
-            raise Exception('Authentication required or invalid credentials.')
-        morshed_student = MorshedStudent.objects.get(student_id=student_id)
-        return OTP.objects.filter(morshed_user=morshed_student).latest('created_at')
