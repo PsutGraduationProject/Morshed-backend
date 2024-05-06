@@ -19,6 +19,11 @@ class Courses(BaseModel):
         null=True,
         blank=True
     )
+    course_image_detail = models.ImageField(
+        upload_to='media/course_images/',
+        null=True,
+        blank=True
+    )
     course_description = models.TextField(
         null=True,
         blank=True
