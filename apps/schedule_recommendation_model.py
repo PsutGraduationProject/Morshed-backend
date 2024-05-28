@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 project_path = os.getenv('PROJECT_PATH')
 
-directory = os.path.join(project_path, 'Morshed-backend', 'apps')
+directory = os.path.join(project_path, 'apps')
 
 file_path = os.path.join(directory, 'STD.csv')
 
