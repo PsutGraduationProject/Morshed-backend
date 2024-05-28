@@ -8,8 +8,9 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 
+project_path = os.getenv('PROJECT_PATH')
 
-directory = os.path.join(os.path.expanduser('~'), 'Morshed-backend', 'apps')
+directory = os.path.join(project_path, 'Morshed-backend', 'apps')
 
 file_path = os.path.join(directory, 'STD.csv')
 
