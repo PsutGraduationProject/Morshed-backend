@@ -1,12 +1,16 @@
+import json
+
 import graphene
 from django.db.models import Q
 from apps.user_auth.models import MorshedStudent
 from apps.schedule_recommendation_model import recommend_and_predict_grades
+from apps.course_recommendation_model import recommend_courses_for_student
 from graphene_django.types import DjangoObjectType
 from apps.course.constant import (
     ADVANCE,
     BEGINNER,
     INTERMEDIATE,
+    ALL
 )
 from apps.course.models import (
     Courses,
@@ -18,6 +22,7 @@ class CoursesType(DjangoObjectType):
     """
     CoursesType class is used to define the type of the Courses model
     """
+
     class Meta:
         """
         Metaclass is used to define the model and fields of the CoursesType
@@ -30,6 +35,7 @@ class StudentCourseType(DjangoObjectType):
     """
     StudentCourseType class is used to define the type of the StudentCourse model
     """
+
     class Meta:
         """
         Metaclass is used to define the model and fields of the StudentCourseType
@@ -60,10 +66,10 @@ class Query(graphene.ObjectType):
             raise Exception('Authentication required or not Logged in')
         schedule_recommendation = recommend_and_predict_grades(student_id)
 
-        course_ids = schedule_recommendation.keys()
-        course_ids = list(map(int, course_ids))
+        course_numbers = schedule_recommendation.keys()
+        course_numbers = list(map(int, course_numbers))
         courses = Courses.objects.filter(
-            course_number__in=course_ids,
+            course_number__in=course_numbers,
             is_external=False
         )
         for course in courses:
@@ -78,22 +84,30 @@ class Query(graphene.ObjectType):
         user = info.context.user
         if user.is_anonymous or user.student_id != student_id:
             raise Exception('Authentication required or not Logged in')
-        student = MorshedStudent.objects.get(student_id=student_id)
-        level = ''
-        if student.student_gpa:
-            if student.student_gpa >= 85:
-                level = ADVANCE
-            elif 75 <= student.student_gpa < 85:
-                level = INTERMEDIATE
-            else:
-                level = BEGINNER
-        student_courses = StudentCourse.objects.filter(
-            student_id=student
-        )
-        course_ids = [student_course.course_id.id for student_course in student_courses]
+        course_recommendation = recommend_courses_for_student(student_id)
+        course_numbers = [course_number for course_number in course_recommendation.keys()]
         courses = Courses.objects.filter(
-            id__in=course_ids,
-            is_external=True,
-            course_level=level
+            course_number__in=course_numbers,
+            is_external=True
+        )
+        for course in courses:
+            course.course_price = course_recommendation[course.course_number]['price']
+            course.course_provider = 'Udemy'
+            if "All Levels" in course_recommendation[course.course_number]['level']:
+                course.course_level = ALL
+            elif "Beginner Level" in course_recommendation[course.course_number]['level']:
+                course.course_level = BEGINNER
+            elif "Intermediate Level" in course_recommendation[course.course_number]['level']:
+                course.course_level = INTERMEDIATE
+            elif "Expert Level" in course_recommendation[course.course_number]['level']:
+                course.course_level = ADVANCE
+            course.number_of_hours = course_recommendation[course.course_number]['content_duration']
+            course.course_url = course_recommendation[course.course_number]['url']
+            course.course_image = course_recommendation[course.course_number]['course_image']
+            course.course_image_detail = course_recommendation[course.course_number]['course_image']
+        Courses.objects.bulk_update(
+            courses,
+            ['course_price', 'course_provider', 'course_level', 'number_of_hours', 'course_url', 'course_image',
+             'course_image_detail']
         )
         return courses
