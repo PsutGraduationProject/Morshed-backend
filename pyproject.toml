@@ -7,10 +7,10 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.10"
+python = "^3.10"
 mysqlclient = "2.2.0"
 idna = "3.4"
-django = "4.2.5"
+django = "^4.2.5"
 typing-extensions = "4.8.0"
 django-cors-headers = "4.2.0"
 graphene-django = "3.1.5"
