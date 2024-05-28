@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     # 3rd party
     'graphene_django',
     'corsheaders',
-    'django_filters',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'graphql_auth',
 ]
