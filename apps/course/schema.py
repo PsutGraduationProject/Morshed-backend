@@ -101,7 +101,7 @@ class Query(graphene.ObjectType):
                 course.course_level = INTERMEDIATE
             elif "Expert Level" in course_recommendation[course.course_number]['level']:
                 course.course_level = ADVANCE
-            course.number_of_hours = course_recommendation[course.course_number]['content_duration']
+            course.number_of_hours = int(course_recommendation[course.course_number]['content_duration'])
             course.course_url = course_recommendation[course.course_number]['url']
             course.course_image = course_recommendation[course.course_number]['course_image']
             course.course_image_detail = course_recommendation[course.course_number]['course_image']
