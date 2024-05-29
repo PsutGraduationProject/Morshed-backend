@@ -55,7 +55,7 @@ class Courses(BaseModel):
         null=True,
         blank=True
     )
-    number_of_hours = models.IntegerField(
+    number_of_hours = models.FloatField(
         null=True,
         blank=True
     )
